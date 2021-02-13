@@ -6,7 +6,7 @@ target/
 !**/src/test/**/target/
 
 ### STS ###
-.apt_generated
+.apt_generatedmvn
 .classpath
 .factorypath
 .project
