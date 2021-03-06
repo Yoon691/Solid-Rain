@@ -1,12 +1,18 @@
 package fr.univlyon1.m1if.mif13.users.dao;
 
 import fr.univlyon1.m1if.mif13.users.model.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 
 import java.util.*;
 
+
 public class UserDao implements Dao<User> {
+
     private List<User> users = new ArrayList<>();
+
+
 
     /**
      * Récupère un utilisateur
@@ -30,6 +36,7 @@ public class UserDao implements Dao<User> {
         for(int i = 0; i < users.size(); i++){
             loginUsers.add(users.get(i).getLogin());
         }
+        System.out.println("getAll");
         return loginUsers;
     }
 
