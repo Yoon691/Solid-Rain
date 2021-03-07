@@ -23,6 +23,10 @@ public class User {
         this.login = login;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
     public void setPassword(String password) {
         this.password = password;
     }
@@ -31,7 +35,7 @@ public class User {
         return this.connected;
     }
 
-    public void authenticate(String password) throws AuthenticationException {
+    public void validatePassword(String password) throws AuthenticationException {
         if(!password.equals(this.password)) {
             throw new AuthenticationException("Erroneous password");
         }
