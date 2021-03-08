@@ -1,6 +1,5 @@
 package fr.univlyon1.m1if.mif13.users;
 
-import fr.univlyon1.m1if.mif13.users.controller.controllerRest;
 import fr.univlyon1.m1if.mif13.users.dao.UserDao;
 import fr.univlyon1.m1if.mif13.users.model.User;
 import org.springframework.context.annotation.Bean;

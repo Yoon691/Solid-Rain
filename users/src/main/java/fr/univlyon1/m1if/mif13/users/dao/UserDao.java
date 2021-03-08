@@ -1,8 +1,7 @@
 package fr.univlyon1.m1if.mif13.users.dao;
 
 import fr.univlyon1.m1if.mif13.users.model.User;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+
 
 
 import java.util.*;
@@ -23,16 +22,11 @@ public class UserDao implements Dao<User> {
      */
     @Override
     public Optional<User> get(String id) {
-        //return Optional.empty();
         Optional<User> user = Optional.empty();
-        System.out.println("getDAO");
         for (User value : users) {
-            System.out.println("forgetDAO");
             if (value.getLogin().equals(id) ) {
-                System.out.println("ifgetDAO");
                 Optional<User> u = Optional.of(value);
                 user = u;
-                //Optional<User> u = Optional.ofNullable(users.get(i));
             }
         }
             return user;
@@ -50,7 +44,7 @@ public class UserDao implements Dao<User> {
         for(int i = 0; i < users.size(); i++){
             loginUsers.add(users.get(i).getLogin());
         }
-        System.out.println("getAll");
+
         return loginUsers;
     }
 
@@ -61,7 +55,6 @@ public class UserDao implements Dao<User> {
      */
     @Override
     public void save(User user) {
-        System.out.println("save");
         users.add(user);
     }
 

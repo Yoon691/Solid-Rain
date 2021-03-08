@@ -12,20 +12,20 @@ import java.util.Optional;
 import java.util.Set;
 
 @RestController
-public class controllerRest {
+public class ControllerRest {
 
 
     @Autowired
     private UserDao userDao;
 
     /**
-     * Create - Add a new user
-     * @Param User An objet user
-     *
+     * Creation - Ajouter un  nouveau user
+     * @Param User Un objet user
+     * esseyer de changer le type de retour avec ResponseEntity et tester avec badRequest
+     * sinin utilise @RequestMapping avec methode Post
      */
     @PostMapping("/user")
     public User createUser(@RequestBody User user){
-        System.out.println("post");
         User userSave = new User(user.getLogin(), user.getPassword());
         userDao.save(userSave);
         return userSave;
@@ -37,28 +37,25 @@ public class controllerRest {
      */
     @GetMapping("/users")
     public Set<String> getUsers(){
-        System.out.println("get");
-        //userDao = new UserDao();
         return userDao.getAll();
     }
 
     /**
-     * Read - Get one user
-     * @Param Id The login of user.
-     * @Return An user object full filled
+     * Lire - Get un user
+     * @Param Id le login de user.
+     * @Return Un objet user
      */
     @GetMapping("/user/{id}")
     public User getUser(@PathVariable("id") String id){
-        System.out.println(id);
         Optional<User> user = userDao.get(id);
         return user.orElse(null);
     }
 
     /**
-     * Update - Update an existing user
-     * @param id - The login of the employee to update
-     * @param user - The user object updated
-     *
+     * Update - Modifier un user existe
+     * @param id - Le login de user a modifier
+     * @param user - le objet user a modifier
+     *Pareil pour que le post
      */
 
     @PutMapping("/user/{id}")
@@ -83,8 +80,8 @@ public class controllerRest {
     }
 
     /**
-     * Delete - Delete an user
-     * @param id - The id of user to delete
+     * Delete - Supprimer  un user
+     * @param id - Le id de user a supprimer
      */
 
     @DeleteMapping("user/{id}")
