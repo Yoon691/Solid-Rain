@@ -5,6 +5,8 @@ import fr.univlyon1.m1if.mif13.users.dao.UserDao;
 import fr.univlyon1.m1if.mif13.users.model.User;
 import org.apache.catalina.core.ApplicationContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,15 +22,19 @@ public class ControllerRest {
 
     /**
      * Creation - Ajouter un  nouveau user
-     * @Param User Un objet user
-     * esseyer de changer le type de retour avec ResponseEntity et tester avec badRequest
-     * sinin utilise @RequestMapping avec methode Post
+     * @Param login - le login  user
+     * @Param password - le password de user
+     * @return Une réponse vide avec un code de statut approprié (204, 400, 401).
      */
     @PostMapping("/user")
-    public User createUser(@RequestBody User user){
-        User userSave = new User(user.getLogin(), user.getPassword());
+    public ResponseEntity<User> createUser(@RequestParam("login") String login, @RequestParam ("password") String password){
+        if (login == null || password == null) {
+            System.out.println("PostCreation");
+            return ResponseEntity.badRequest().build();
+        }
+        User userSave = new User(login, password);
         userDao.save(userSave);
-        return userSave;
+        return  ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     /**
@@ -42,7 +48,7 @@ public class ControllerRest {
 
     /**
      * Lire - Get un user
-     * @Param Id le login de user.
+     * @Param id - le login de user.
      * @Return Un objet user
      */
     @GetMapping("/user/{id}")
@@ -54,29 +60,35 @@ public class ControllerRest {
     /**
      * Update - Modifier un user existe
      * @param id - Le login de user a modifier
-     * @param user - le objet user a modifier
-     *Pareil pour que le post
+     * @param login - le login de user a modifier
+     * @param password - le password de user a modifier
+     *Marche mais N probléme dans le if il faut le régler car il faut le deux param pour
+     * modifier le user mais a la base avec on peut changer que un seul
      */
 
     @PutMapping("/user/{id}")
-    public User updateUser(@PathVariable("id") final String id, @RequestBody User user){
-        Optional<User> u = userDao.get(id);
-        if (u.isPresent()){
-            User currentUser = u.get();
-
-            String login = user.getLogin();
-            if (login != null) {
-                currentUser.setLogin(login);
-            }
-            String password = user.getPassword();
-            if ( password != null) {
-                currentUser.setPassword(password);
-            }
-
-            return currentUser;
-        } else {
-            return null;
+    public ResponseEntity<User> updateUser(@PathVariable("id") final String id, @RequestParam("login") String login, @RequestParam ("password") String password){
+        if ((login == null) & (password == null)) {
+            System.out.println("PostCreation");
+            return ResponseEntity.badRequest().build();
         }
+            Optional<User> u = userDao.get(id);
+            if (u.isPresent()) {
+                User currentUser = u.get();
+
+                if (login != null) {
+                    currentUser.setLogin(login);
+                }
+
+                if (password != null) {
+                    currentUser.setPassword(password);
+                }
+
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            } else {
+                return null;
+            }
+
     }
 
     /**
