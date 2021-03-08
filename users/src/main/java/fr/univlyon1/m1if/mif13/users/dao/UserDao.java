@@ -11,9 +11,6 @@ public class UserDao implements Dao<User> {
 
     private List<User> users = new ArrayList<>();
 
-
-
-
     /**
      * Récupère un utilisateur
      *

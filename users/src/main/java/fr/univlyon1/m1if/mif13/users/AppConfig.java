@@ -15,8 +15,7 @@ public class AppConfig {
     public UserDao userDao() {
         UserDao userDao = new UserDao();
         User user = new User("Younes", "Derbal");
-        User user1 = new User("Aliou", "Sadio");
-
+        User user1 = new User("John", "john1234");
         userDao.save(user);
         userDao.save(user1);
         return userDao;
