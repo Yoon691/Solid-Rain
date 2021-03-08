@@ -4,6 +4,7 @@ import fr.univlyon1.m1if.mif13.users.dao.UserDao;
 import fr.univlyon1.m1if.mif13.users.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -30,19 +31,52 @@ public class OperationController {
      * @param password Le password à vérifier.
      * @return Une ResponseEntity avec le JWT dans le header "Authentication" si le login s'est bien passé, et le code de statut approprié (204, 401 ou 404).
      */
-    @PostMapping("/login")
-    public ResponseEntity<Void> login(@RequestParam("login") String login, @RequestParam("password") String password, @RequestHeader("Origin") String origin) {
+    @RequestMapping(
+            value = "/login",
+            produces = { "application/json", "application/xml" },
+            method = RequestMethod.POST,
+            consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
+    )
+    public ResponseEntity<Void> loginUrlEncoded(@RequestParam("login") String login, @RequestParam("password") String password,
+                                                @RequestHeader("Origin") String origin){
         if (login == null || password == null) {
+        return ResponseEntity.badRequest().build();
+    }
+    User user = new User(login, password);
+
+    Optional<User> userOptional = userDao.get(user.getLogin());
+        if (userOptional.isEmpty()) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+        try {
+        userOptional.get().validatePassword(password);
+    } catch (AuthenticationException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+    String authorizationToken = generateToken(user.getLogin(), origin);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+            .header("Authorization", "Bearer ".concat(authorizationToken)).build();
+}
+
+    @RequestMapping(
+            value = "/login",
+            produces = { "application/json", "application/xml" },
+    method = RequestMethod.POST,
+    consumes = {MediaType.APPLICATION_JSON_VALUE}
+    )
+    public ResponseEntity<Void> loginJson(@RequestBody User userRequest, @RequestHeader("Origin") String origin){
+        if (userRequest.getLogin() == null || userRequest.getPassword() == null) {
             return ResponseEntity.badRequest().build();
         }
-        User user = new User(login, password);
+        User user = new User(userRequest.getLogin(), userRequest.getPassword());
 
         Optional<User> userOptional = userDao.get(user.getLogin());
         if (userOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         try {
-            userOptional.get().validatePassword(password);
+            userOptional.get().validatePassword(userRequest.getPassword());
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -51,6 +85,27 @@ public class OperationController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .header("Authorization", "Bearer ".concat(authorizationToken)).build();
     }
+//    @PostMapping("/login")
+//    public ResponseEntity<Void> login(@RequestParam("login") String login, @RequestParam("password") String password, @RequestHeader("Origin") String origin) {
+//        if (login == null || password == null) {
+//            return ResponseEntity.badRequest().build();
+//        }
+//        User user = new User(login, password);
+//
+//        Optional<User> userOptional = userDao.get(user.getLogin());
+//        if (userOptional.isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+//        }
+//        try {
+//            userOptional.get().validatePassword(password);
+//        } catch (AuthenticationException e) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+//        }
+//        String authorizationToken = generateToken(user.getLogin(), origin);
+//
+//        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+//                .header("Authorization", "Bearer ".concat(authorizationToken)).build();
+//    }
 
     /**
      * Réalise la déconnexion

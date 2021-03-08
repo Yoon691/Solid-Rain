@@ -26,8 +26,9 @@ public class ControllerRest {
      * @Param password - le password de user
      * @return Une réponse vide avec un code de statut approprié (204, 400, 401).
      */
-    @PostMapping("/user")
-    public ResponseEntity<User> createUser(@RequestParam("login") String login, @RequestParam ("password") String password){
+    //value = "/users", consumes = {"application/json","application/x-www-form-urlencoded"}
+    @PostMapping(value = "/user", consumes = {"application/x-www-form-urlencoded"})
+    public ResponseEntity<User> createUserEncoded(@RequestParam("login") String login, @RequestParam ("password") String password){
         if (login == null || password == null) {
             System.out.println("PostCreation");
             return ResponseEntity.badRequest().build();
@@ -37,11 +38,28 @@ public class ControllerRest {
         return  ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    @PostMapping(value = "/user", consumes = {"application/json"})
+    public ResponseEntity<User> createUserJson(@RequestBody User user){
+        if (user.getLogin() == null || user.getPassword() == null) {
+            System.out.println("PostCreation");
+            return ResponseEntity.badRequest().build();
+        }
+        User userSave = new User(user.getLogin(), user.getPassword());
+        userDao.save(userSave);
+        return  ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
     /**
      * Lire - Get tout les users
      * @Return - Un objet User
      */
-    @GetMapping("/users")
+//    @GetMapping(value = "/users",
+//                produces = { "application/json","application/xml" })
+    @RequestMapping(
+            value = "/users",
+            produces = { "application/json","application/xml" },
+            method = RequestMethod.GET)
+    @ResponseBody
     public Set<String> getUsers(){
         return userDao.getAll();
     }
@@ -50,6 +68,7 @@ public class ControllerRest {
      * Lire - Get un user
      * @Param id - le login de user.
      * @Return Un objet user
+     * que produce comme le get précedent
      */
     @GetMapping("/user/{id}")
     public User getUser(@PathVariable("id") String id){
@@ -64,6 +83,7 @@ public class ControllerRest {
      * @param password - le password de user a modifier
      *Marche mais N probléme dans le if il faut le régler car il faut le deux param pour
      * modifier le user mais a la base avec on peut changer que un seul
+     *     consumer le put comme le post de creation
      */
 
     @PutMapping("/user/{id}")
