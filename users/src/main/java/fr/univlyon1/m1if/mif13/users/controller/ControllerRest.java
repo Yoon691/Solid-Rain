@@ -9,7 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
+import javax.naming.AuthenticationException;
 import java.util.Optional;
 import java.util.Set;
 
@@ -29,13 +31,18 @@ public class ControllerRest {
     //value = "/users", consumes = {"application/json","application/x-www-form-urlencoded"}
     @PostMapping(value = "/user", consumes = {"application/x-www-form-urlencoded"})
     public ResponseEntity<User> createUserEncoded(@RequestParam("login") String login, @RequestParam ("password") String password){
-        if (login == null || password == null) {
-            System.out.println("PostCreation");
-            return ResponseEntity.badRequest().build();
+        try {
+
+            if (login == null || password == null) {
+                System.out.println("PostCreation");
+                return ResponseEntity.badRequest().build();
+            }
+            User userSave = new User(login, password);
+            userDao.save(userSave);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        } catch (AuthenticationException exc){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Foo Not Found", exc);
         }
-        User userSave = new User(login, password);
-        userDao.save(userSave);
-        return  ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PostMapping(value = "/user", consumes = {"application/json"})
