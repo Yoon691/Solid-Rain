@@ -3,6 +3,10 @@ package fr.univlyon1.m1if.mif13.users.controller;
 
 import fr.univlyon1.m1if.mif13.users.dao.UserDao;
 import fr.univlyon1.m1if.mif13.users.model.User;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,10 +27,17 @@ public class ControllerRest {
      * @Param password - le password de user
      * @return Une réponse vide avec un code de statut approprié (204, 400, 401).
      */
-    @PostMapping(value = "/user", consumes = {"application/x-www-form-urlencoded"})
+    @PostMapping(value = "/user", consumes = {"application/x-www-form-urlencoded","application/json"})
+    @Operation(
+            summary = "Créer un  utilisateur",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "Utilisateur crée",
+                            content = @Content(schema = @Schema(implementation = User.class))),
+                    @ApiResponse(responseCode = "400", description = "Paramètres de la requête non acceptables"),
+                    @ApiResponse(responseCode = "401", description = "Utilisateur non crée")})
+
     public ResponseEntity<User> createUserEncoded(@RequestParam("login") String login, @RequestParam ("password") String password){
         if (login == null || password == null) {
-            System.out.println("PostCreation");
             return ResponseEntity.badRequest().build();
         }
         User userSave = new User(login, password);
@@ -34,13 +45,19 @@ public class ControllerRest {
         return  ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @PostMapping(value = "/user", consumes = {"application/json"})
-    public ResponseEntity<User> createUserJson(@RequestBody User user){
-        if (user.getLogin() == null || user.getPassword() == null) {
-            System.out.println("PostCreation");
+    @PostMapping(value = "/user", consumes = {"application/json","application/x-www-form-urlencoded"})
+    @Operation(
+            summary = "Créer un utilisateur",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "Utilisateur crée",
+                            content = @Content(schema = @Schema(implementation = User.class))),
+                    @ApiResponse(responseCode = "400", description = "Paramètres de la requête non acceptables"),
+                    @ApiResponse(responseCode = "401", description = "Utilisateur non crée")})
+    public ResponseEntity<User> createUserJson(@RequestBody String login, @RequestBody String password){
+        if (login == null || password == null) {
             return ResponseEntity.badRequest().build();
         }
-        User userSave = new User(user.getLogin(), user.getPassword());
+        User userSave = new User(login, password);
         userDao.save(userSave);
         return  ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
@@ -49,103 +66,108 @@ public class ControllerRest {
      * Lire - Get tout les users
      * @Return - Un objet User
      */
-//    @GetMapping(value = "/users",
-//                produces = { "application/json","application/xml" })
-    @RequestMapping(
-            value = "/users",
-            produces = { "application/json","application/xml" },
-            method = RequestMethod.GET)
-    public Set<String> getUsers(){
+    @GetMapping(value = "/users",produces = { "application/json","application/xml" })
+    @Operation(
+            summary = "Récuperer la liste des uttilisateurs",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Operation réussie",
+                            content = @Content(schema = @Schema(implementation = User.class))),
+                   })
+    public Set<String>getUsers(){
         return userDao.getAll();
     }
-
     /**
      * Lire - Get un user
      * @Param id - le login de user.
      * @Return Un objet user
      */
-    @GetMapping(value = "/user/{id}",
+    @GetMapping(value = "/user/{login}",
             produces = { "application/json","application/xml" })
-    public User getUser(@PathVariable("id") String id){
-        Optional<User> user = userDao.get(id);
-        return user.orElse(null);
+    @Operation(
+            summary = "Récuperer un utilisateur",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = " Opération réussie",
+                            content = @Content(schema = @Schema(implementation = User.class))),
+                    @ApiResponse(responseCode = "404", description = "Utilisateur non trouvé")})
+    public User getUser(@PathVariable("login") String login){
+        Optional<User> user = userDao.get(login);
+        if(user.isPresent()){
+            return user.get();
+        }
+        return null;//Gestion des status à faire 404
     }
 
     /**
      * Update - Modifier un user existe
-     * @param id - Le login de user a modifier
-     * @param login - le login de user a modifier
+     * @param login - Le login de user a modifier
      * @param password - le password de user a modifier
-     *Marche mais N probléme dans le if il faut le régler car il faut le deux param pour
-     * modifier le user mais a la base avec on peut changer que un seul
-     *     ne marche pas urlEnconded
-     *
+     * @return  avec un code de statut approprié (204, 400, 404).
      */
 
-    @PutMapping(value = "/user/{id}", consumes = {"application/x-www-form-urlencoded"})
-    public ResponseEntity<User> updateUserUrlEncoded(@PathVariable("id") final String id,
-                                           @RequestParam("login") String login,
-                                           @RequestParam ("password") String password)
+    @PutMapping(value = "/user/{login}", consumes = {"application/x-www-form-urlencoded"})
+    @Operation(
+            summary = "Mettre à jour le password de l'utilisateur",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = " Password correctement modifié",
+                            content = @Content(schema = @Schema(implementation = User.class))),
+                    @ApiResponse(responseCode = "400", description = "Paramètres de la requête non acceptables"),
+                    @ApiResponse(responseCode = "404", description = "Utilisateur non trouvé")})
+    public ResponseEntity<User> updateUserUrlEncoded(@PathVariable("login") final String login,
+                                                     @RequestParam ("password") String password)
     {
-        if ((login == null) && (password == null)) {
-            System.out.println("PostCreation");
-            return ResponseEntity.badRequest().build();
-        }
-        Optional<User> u = userDao.get(id);
-        if (u.isPresent()) {
-            User currentUser = u.get();
-
-            if (login != null) {
-                currentUser.setLogin(login);
-            }
-
-            if (password != null) {
-                currentUser.setPassword(password);
-            }
-
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        } else {
-            return null;
-        }
+        return getUserResponseEntity(login, password);
     }
 
 
-    @PutMapping(value = "/user/{id}" , consumes = {"application/json"})
-    public ResponseEntity<User> updateUserJson(@PathVariable("id") final String id,
-                                               @RequestBody User userRequest)
+    @PutMapping(value = "/user/{login}" , consumes = {"application/json"})
+    @Operation(
+            summary = "Mettre à jour le password de l'utilisateur",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = " Password correctement modifié",
+                            content = @Content(schema = @Schema(implementation = User.class))),
+                    @ApiResponse(responseCode = "400", description = "Paramètres de la requête non acceptables"),
+                    @ApiResponse(responseCode = "404", description = "Utilisateur non trouvé")})
+    public ResponseEntity<User> updateUserJson(@PathVariable("login") final String login,
+                                               @RequestBody String password)
     {
-        if ((userRequest.getLogin() == null) && (userRequest.getPassword() == null)) {
-            System.out.println("PostCreation");
+        return getUserResponseEntity(login, password);
+    }
+
+    private ResponseEntity<User> getUserResponseEntity(@PathVariable("login") String login, @RequestBody String password) {
+        if ( password == null) {
             return ResponseEntity.badRequest().build();
         }
-        Optional<User> u = userDao.get(id);
+        Optional<User> u = userDao.get(login);
         if (u.isPresent()) {
             User currentUser = u.get();
-
-            if (userRequest.getLogin()!= null) {
-                currentUser.setLogin(userRequest.getLogin());
-            }
-
-            if (userRequest.getPassword() != null) {
-                currentUser.setPassword(userRequest.getPassword());
-            }
-
+            currentUser.setPassword(password);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        } else {
-            return null;
         }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+
     }
 
     /**
      * Delete - Supprimer  un user
-     * @param id - Le id de user a supprimer
+     * @param login - Le id de user a supprimer
+     * @return  une reponse vide avec le code de status approprié(204,404)
      */
 
-    @DeleteMapping("user/{id}")
-    public void deleteUser(@PathVariable("id") final String id){
-        Optional<User> u = userDao.get(id);
-        User currentUser = u.get();
-        userDao.delete(currentUser);
+    @DeleteMapping("user/{login}")
+    @Operation(
+            summary = "Supprimer  l'utilisateur",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "Utilisateur supprimé",
+                            content = @Content(schema = @Schema(implementation = User.class))),
+                    @ApiResponse(responseCode = "404", description = "Utilisateur non trouvé")})
+    public ResponseEntity<Void> deleteUser(@PathVariable("login") final String login){
+        Optional<User> user = userDao.get(login);
+        if(user.isPresent()) {
+            User currentUser = user.get();
+            userDao.delete(currentUser);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
 

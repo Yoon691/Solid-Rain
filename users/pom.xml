@@ -51,6 +51,18 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<!-- springdoc-openapi-ui-->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-ui</artifactId>
+			<version>1.5.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-webmvc-core</artifactId>
+			<version>1.5.4</version>
+		</dependency>
+
 	</dependencies>
 	<build>
 		<finalName>${artifactId}</finalName>
