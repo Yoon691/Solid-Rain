@@ -3,10 +3,12 @@ package fr.univlyon1.m1if.mif13.users.controller;
 import fr.univlyon1.m1if.mif13.users.dao.UserDao;
 import fr.univlyon1.m1if.mif13.users.model.User;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -32,14 +34,17 @@ public class OperationController {
      * @param password Le password à vérifier.
      * @return Une ResponseEntity avec le JWT dans le header "Authentication" si le login s'est bien passé, et le code de statut approprié (204, 401 ou 404).
      */
-    @PostMapping("/login")
+
     @Operation(
             summary = "Connexion utilisateur",
             responses = {
-                    @ApiResponse(responseCode = "204", description = "Utilisateur connecté",
-                            content = @Content(schema = @Schema(implementation = User.class))),
+                    @ApiResponse(responseCode = "204",
+                                 description = "Utilisateur connecté",
+                                 headers = @Header(name = HttpHeaders.AUTHORIZATION, description = "token")),
                     @ApiResponse(responseCode = "400", description = "Paramètres de la requête non acceptables"),
                     @ApiResponse(responseCode = "401", description = "Utilisateur non authentifié")})
+    @PostMapping("/login")
+    @CrossOrigin(origins = {"http://localhost", "http://192.168.75.22",  "https://192.168.75.22"}, exposedHeaders = HttpHeaders.AUTHORIZATION)
     public ResponseEntity<Void> login(@RequestParam("login") String login,
                                                 @RequestParam("password") String password,
                                                 @RequestHeader("Origin") String origin){
@@ -69,13 +74,15 @@ public class OperationController {
      * @param login de l'utilisateur à déconnecté
      * @return Une réponse vide avec un code de statut approprié (204, 401).
      */
-    @DeleteMapping( "/logout")
+
     @Operation(
             summary = "Deconnexion de l'utilisateur connecté",
             responses = {
                     @ApiResponse(responseCode = "204", description = "Utilisateur deconecté",
                             content = @Content(schema = @Schema(implementation = User.class))),
                     @ApiResponse(responseCode = "401", description = "Utilisateur non authentifié")})
+    @DeleteMapping( "/logout")
+    @CrossOrigin(origins = {"http://localhost", "http://192.168.75.22", "https://192.168.75.22"})
     public ResponseEntity<Void> logout(@RequestParam("login") String login){
 
         if (login == null) {
@@ -92,6 +99,7 @@ public class OperationController {
         return  ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+
     /**
      * Méthode destinée au serveur Node pour valider l'authentification d'un utilisateur.
      * @param token Le token JWT qui se trouve dans le header "Authentication" de la requête
@@ -99,7 +107,6 @@ public class OperationController {
      * @return Une réponse vide avec un code de statut approprié (204, 400, 401).
      *
      */
-    @PostMapping("/authenticate")
     @Operation(
             summary = "Authentification utilisateur",
             responses = {
@@ -107,6 +114,8 @@ public class OperationController {
                             content = @Content(schema = @Schema(implementation = User.class))),
                     @ApiResponse(responseCode = "400", description = "Paramètres de la requête non acceptables"),
                     @ApiResponse(responseCode = "401", description = "Utilisateur non authentifié")})
+    @GetMapping("/authenticate")
+    @CrossOrigin(origins = {"http://localhost", "http://192.168.75.22",  "https://192.168.75.22"})
     public ResponseEntity<Void> authenticate(@RequestParam("token") String token,
                                              @RequestParam("origin") String origin)
     {
