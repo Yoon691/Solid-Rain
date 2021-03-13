@@ -124,8 +124,18 @@ public class OperationController {
         }
 
         String authenticateToken = verifyToken(token, origin);
+        Optional<User> userOptional = userDao.get(authenticateToken);
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        if (userOptional.get().isConnected()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).header("authenticate",authenticateToken).build();
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+
+
     }
 
 
