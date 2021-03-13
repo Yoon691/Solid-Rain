@@ -18,7 +18,7 @@ import java.net.UnknownServiceException;
 import java.util.Optional;
 
 @Controller
-public class ControllerUser {
+public class UserController {
     @Autowired
     private UserDao userDao;
 

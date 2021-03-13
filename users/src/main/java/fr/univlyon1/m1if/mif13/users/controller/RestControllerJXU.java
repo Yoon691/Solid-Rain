@@ -19,7 +19,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @RestController
-public class ControllerRest {
+public class RestControllerJXU {
 
     @Autowired
     private UserDao userDao;
@@ -139,7 +139,6 @@ public class ControllerRest {
                             content = @Content()),
                     @ApiResponse(responseCode = "404", description = "Utilisateur non trouvé",
                             content = @Content())})
-
     @PutMapping(value = "/users/{login}" , consumes = {"application/x-www-form-urlencoded","application/json"})
     private ResponseEntity<User> getUserResponseEntity(@PathVariable("login") String login, @RequestBody User user) {
         if (user.getLogin() == null){
