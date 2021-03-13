@@ -10,6 +10,8 @@ Projets réalisés par :
 
 ***Section TP1&TP2***
 
+- Les liens demandés
+
     -Le lien du fichier YAML sur le dépôt :
         https://forge.univ-lyon1.fr/p1809163/mif13-2021/-/blob/master/api-docs.yaml
     -Le lien du Swagger généré par Spring et déployé sur notre VM :
