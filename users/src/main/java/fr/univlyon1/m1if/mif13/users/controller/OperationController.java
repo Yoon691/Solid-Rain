@@ -2,7 +2,13 @@ package fr.univlyon1.m1if.mif13.users.controller;
 
 import fr.univlyon1.m1if.mif13.users.dao.UserDao;
 import fr.univlyon1.m1if.mif13.users.model.User;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.headers.Header;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +22,7 @@ import static fr.univlyon1.m1if.mif13.users.utils.JwtHelper.generateToken;
 import static fr.univlyon1.m1if.mif13.users.utils.JwtHelper.verifyToken;
 
 @Controller
+@ResponseBody
 public class OperationController {
 
     @Autowired
@@ -27,11 +34,18 @@ public class OperationController {
      * @param password Le password à vérifier.
      * @return Une ResponseEntity avec le JWT dans le header "Authentication" si le login s'est bien passé, et le code de statut approprié (204, 401 ou 404).
      */
-    @RequestMapping(value = "/login",
-            produces = { "application/json", "application/xml" },
-            method = RequestMethod.POST,
-            consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
-    public ResponseEntity<Void> loginUrlEncoded(@RequestParam("login") String login,
+
+    @Operation(
+            summary = "Connexion utilisateur",
+            responses = {
+                    @ApiResponse(responseCode = "204",
+                                 description = "Utilisateur connecté",
+                                 headers = @Header(name = HttpHeaders.AUTHORIZATION, description = "token")),
+                    @ApiResponse(responseCode = "400", description = "Paramètres de la requête non acceptables"),
+                    @ApiResponse(responseCode = "401", description = "Utilisateur non authentifié")})
+    @PostMapping("/login")
+    @CrossOrigin(origins = {"http://localhost", "http://192.168.75.22",  "https://192.168.75.22"}, exposedHeaders = HttpHeaders.AUTHORIZATION)
+    public ResponseEntity<Void> login(@RequestParam("login") String login,
                                                 @RequestParam("password") String password,
                                                 @RequestHeader("Origin") String origin){
         if (login == null || password == null) {
@@ -54,38 +68,22 @@ public class OperationController {
             .header("Authorization", "Bearer ".concat(authorizationToken)).build();
 }
 
-    @RequestMapping(value = "/login",
-            produces = { "application/json", "application/xml" },
-            method = RequestMethod.POST,
-            consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Void> loginJson(@RequestBody User userRequest,
-                                          @RequestHeader("Origin") String origin){
-        if (userRequest.getLogin() == null || userRequest.getPassword() == null) {
-            return ResponseEntity.badRequest().build();
-        }
-        User user = new User(userRequest.getLogin(), userRequest.getPassword());
-
-        Optional<User> userOptional = userDao.get(user.getLogin());
-        if (userOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-        try {
-            userOptional.get().validatePassword(userRequest.getPassword());
-        } catch (AuthenticationException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        String authorizationToken = generateToken(user.getLogin(), origin);
-
-        return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .header("Authorization", "Bearer ".concat(authorizationToken)).build();
-    }
 
     /**
-     * Réalise la déconnexion
-     * Ne marche pas urlEncode
+     * Procédure déconnexion
+     * @param login de l'utilisateur à déconnecté
+     * @return Une réponse vide avec un code de statut approprié (204, 401).
      */
-    @DeleteMapping(value = "/logout" ,consumes = {"application/x-www-form-urlencoded"})
-    public ResponseEntity<Void> logoutUrlEncoded(@RequestParam("login") String login){
+
+    @Operation(
+            summary = "Deconnexion de l'utilisateur connecté",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "Utilisateur deconecté",
+                            content = @Content(schema = @Schema(implementation = User.class))),
+                    @ApiResponse(responseCode = "401", description = "Utilisateur non authentifié")})
+    @DeleteMapping( "/logout")
+    @CrossOrigin(origins = {"http://localhost", "http://192.168.75.22", "https://192.168.75.22"})
+    public ResponseEntity<Void> logout(@RequestParam("login") String login){
 
         if (login == null) {
             return ResponseEntity.badRequest().build();
@@ -101,35 +99,24 @@ public class OperationController {
         return  ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @DeleteMapping(value = "/logout" ,consumes = {"application/json"})
-    public ResponseEntity<Void> logoutJson(@RequestBody User userRequest){
-
-        if (userRequest.getLogin() == null) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        Optional<User> userOptional = userDao.get(userRequest.getLogin());
-        if (userOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-        if (userOptional.get().isConnected()){
-            userOptional.get().disconnect();
-        }
-        return  ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-    }
-
 
     /**
      * Méthode destinée au serveur Node pour valider l'authentification d'un utilisateur.
      * @param token Le token JWT qui se trouve dans le header "Authentication" de la requête
      * @param origin L'origine de la requête (pour la comparer avec celle du client, stockée dans le token JWT)
      * @return Une réponse vide avec un code de statut approprié (204, 400, 401).
-     * ajouter le status 400
+     *
      */
-    @PostMapping(value = "/authenticate",
-            produces = { "application/json", "application/xml" },
-            consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
-    public ResponseEntity<Void> authenticateUrlEncoded(@RequestParam("token") String token,
+    @Operation(
+            summary = "Authentification utilisateur",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "Utilisateur authentifé",
+                            content = @Content(schema = @Schema(implementation = User.class))),
+                    @ApiResponse(responseCode = "400", description = "Paramètres de la requête non acceptables"),
+                    @ApiResponse(responseCode = "401", description = "Utilisateur non authentifié")})
+    @GetMapping("/authenticate")
+    @CrossOrigin(origins = {"http://localhost", "http://192.168.75.22",  "https://192.168.75.22"})
+    public ResponseEntity<Void> authenticate(@RequestParam("token") String token,
                                              @RequestParam("origin") String origin)
     {
         if (token == null || origin == null) {
@@ -137,22 +124,16 @@ public class OperationController {
         }
 
         String authenticateToken = verifyToken(token, origin);
-
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).header("authenticate",authenticateToken).build();
-    }
-
-    @PostMapping(value = "/authenticate",
-            produces = { "application/json", "application/xml" },
-            consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Void> authenticateJson(@RequestBody String tokenJson,
-                                                 @RequestHeader("origin") String origin)
-    {
-        if (tokenJson == null || origin == null) {
-            return ResponseEntity.badRequest().build();
+        Optional<User> userOptional = userDao.get(authenticateToken);
+        if (userOptional.isPresent()) {
+            if (userOptional.get().isConnected()) {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            }
         }
-        String authenticateToken = verifyToken(tokenJson, origin);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).header("authenticate",authenticateToken).build();
+
+
     }
 
 

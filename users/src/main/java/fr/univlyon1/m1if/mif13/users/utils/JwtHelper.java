@@ -16,7 +16,7 @@ import java.util.Date;
  */
 public class JwtHelper {
     private static final String SECRET = "monbeausecret";
-    private static final String ISSUER = "Présence UCBL";
+    private static final String ISSUER = "Mif13";
     private static final long LIFETIME = 1800000; // Durée de vie d'un token : 30 minutes ; vous pouvez le modifier pour tester
     private static final Algorithm algorithm = Algorithm.HMAC256(SECRET);
 
