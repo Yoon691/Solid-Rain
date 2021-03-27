@@ -4,7 +4,8 @@
   "description": "mif13-grp22",
   "main": "index.js",
   "scripts": {
-    "test": "ng test"
+    "test": "ng test",
+    "start": "nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -24,6 +25,8 @@
     "prettier": "^2.2.1"
   },
   "dependencies": {
-    "express": "^4.17.1"
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "nodemon": "^2.0.7"
   }
 }
