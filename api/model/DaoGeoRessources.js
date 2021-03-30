@@ -31,13 +31,12 @@ class DaoGeoRessources {
     static tabResources = [this.resource1, this.resource2, this.resource3];
 
     static getResoursebyId(id) {
-        let IdResource = null;
         for (let i = 0; i <= this.tabResources.length; i += 1) {
             if (this.tabResources[i].id.toString() === id) {
-                IdResource = this.tabResources[i];
+                return this.tabResources[i];
             }
         }
-        return IdResource;
+    
     }
 
     static updatePosition(id, donne) {

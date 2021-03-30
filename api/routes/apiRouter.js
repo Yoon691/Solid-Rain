@@ -14,15 +14,15 @@ router.get('/resources', (req, res) => {
 });
 
 router.put('/resources/:resourceId/position', (req, res) => {
-    res.status(204).json({ message: 'successful operation' });
     model.updatePosition(req.params.resourceId, req.body);
+    res.status(204).json({ message: 'successful operation' });
 });
 
 router.put('/resources/:resourceId/images', (req, res) => {
-    res.status(204).json({ message: 'successful operation' });
     const urlimage = JSON.stringify(req.body);
     const imageurl = JSON.parse(urlimage);
     model.updateImage(req.params.resourceId, imageurl.image);
+    res.status(204).json({ message: 'successful operation' });
 });
 
 module.exports = router;
