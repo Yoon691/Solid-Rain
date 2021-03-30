@@ -1,0 +1,27 @@
+let express = require('express')
+let router = express.Router()
+
+let model = require('../model/DaoGeoRessources')
+
+router.use(express.json())
+router.use(express.urlencoded({ extended: true }))
+
+//middlewars
+router.get('/resources', (req, res, next) => {
+    res.json(model.tabResources)
+})
+
+router.put('/resources/:resourceId/position', (req, res, next) => {
+    console.log(req.body)
+    res.status(204).json({ message: 'successful operation' })
+    model.updatePosition(req.params.resourceId, req.body)
+})
+
+router.put('/resources/:resourceId/images', (req, res, next) => {
+    res.status(204).json({ message: 'successful operation' })
+    let urlimage = JSON.stringify(req.body)
+    let imageurl = JSON.parse(urlimage)
+    model.updateImage(req.params.resourceId, imageurl.image)
+})
+
+module.exports = router

@@ -1,12 +1,10 @@
-// eslint-disable-next-line no-undef
 const express = require('express')
 const app = express()
 const port = 3376
-// eslint-disable-next-line no-undef
-let api = require('./routes/api')
+
+let api = require('./routes/apiRouter')
 
 app.use('/api', api)
-
 
 app.use('/static', express.static('public'))
 
@@ -17,3 +15,6 @@ app.use(function (req, res, next) {
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)
 })
+if(console.error()){
+let ze = true
+}
