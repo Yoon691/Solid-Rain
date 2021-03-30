@@ -1,8 +1,7 @@
 class Trophys {
-  constructor(description, id) {
-    return [this.description = description,
-      this.id = id];
-  }
+    constructor(description, id) {
+        return [description, id];
+    }
 }
 
 module.exports = Trophys;

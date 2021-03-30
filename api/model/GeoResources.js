@@ -1,15 +1,15 @@
-const trophy = require('./Trophy');
-const latlng = require('./LatLng');
+const Trophy = require('./Trophy');
+const Latlng = require('./LatLng');
 
-class UserSurvivant {
-  constructor(id, image, position, role, ttl, trophys) {
-    this.id = id;
-    this.image = image;
-    this.position = new latlng(position);
-    this.ttl = ttl;
-    this.role = role;
-    this.trophys = new trophy(trophys, id);
-  }
+class GeoResources {
+    constructor(id, image, position, role, ttl, trophys) {
+        this.id = id;
+        this.image = image;
+        this.position = new Latlng(position);
+        this.ttl = ttl;
+        this.role = role;
+        this.trophys = new Trophy(trophys, id);
+    }
 }
 
-module.exports = UserSurvivant;
+module.exports = GeoResources;

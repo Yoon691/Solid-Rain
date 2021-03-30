@@ -1,8 +1,6 @@
-class latLng {
-  constructor([minItems, maxItems]) {
-    // this.minItems = minItems;
-    // this.maxItems = maxItems;
-    return [minItems, maxItems];
-  }
+class LatLng {
+    constructor([minItems, maxItems]) {
+        return [minItems, maxItems];
+    }
 }
-module.exports = latLng;
+module.exports = LatLng;
