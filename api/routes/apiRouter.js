@@ -1,27 +1,29 @@
-let express = require('express')
-let router = express.Router()
+const express = require('express');
 
-let model = require('../model/DaoGeoRessources')
+const router = express.Router();
 
-router.use(express.json())
-router.use(express.urlencoded({ extended: true }))
+const model = require('../model/DaoGeoRessources');
 
-//middlewars
+router.use(express.json());
+router.use(express.urlencoded({ extended: true }));
+
+// middlewars
+
 router.get('/resources', (req, res, next) => {
-    res.json(model.tabResources)
-})
+  res.json(model.tabResources);
+});
 
 router.put('/resources/:resourceId/position', (req, res, next) => {
-    console.log(req.body)
-    res.status(204).json({ message: 'successful operation' })
-    model.updatePosition(req.params.resourceId, req.body)
-})
+  console.log(req.body);
+  res.status(204).json({ message: 'successful operation' });
+  model.updatePosition(req.params.resourceId, req.body);
+});
 
 router.put('/resources/:resourceId/images', (req, res, next) => {
-    res.status(204).json({ message: 'successful operation' })
-    let urlimage = JSON.stringify(req.body)
-    let imageurl = JSON.parse(urlimage)
-    model.updateImage(req.params.resourceId, imageurl.image)
-})
+  res.status(204).json({ message: 'successful operation' });
+  const urlimage = JSON.stringify(req.body);
+  const imageurl = JSON.parse(urlimage);
+  model.updateImage(req.params.resourceId, imageurl.image);
+});
 
-module.exports = router
+module.exports = router;
