@@ -12,4 +12,4 @@ lint:
         - npm i
         - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
     script:
-        cd api && npm run lint
+        - cd api && npm run lint
