@@ -4,7 +4,7 @@ stages:
     - lint
 
 deploy:
-    stage: build
+    stage: deploy
     only:
         - tp3
     before_script:
