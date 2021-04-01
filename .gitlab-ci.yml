@@ -2,7 +2,7 @@ image: node:latest
 
 stages:
     - build
-    - lint
+    #- lint
     - deploy
 
 build : 
@@ -14,14 +14,14 @@ build :
     script :
         - cd api && npm i
 
-lint : 
-    stage : lint
-    only : 
-      - tp3
-    before_script:
-        - . setup-mvn-proxy.sh
-    script :
-        - cd api && npm run lint 
+#lint : 
+    #stage : lint
+    #only : 
+      #- tp3
+    #before_script:
+        #- . setup-mvn-proxy.sh
+    #script :
+        #- cd api && npm run lint 
 
 
 
