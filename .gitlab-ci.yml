@@ -5,6 +5,8 @@ stages:
 
 lint:
     stage: lint
+    only:
+        - tp3
     before_script:
         - cd api
         - npm i
