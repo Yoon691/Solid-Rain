@@ -3,8 +3,8 @@ stages:
     - build
     - lint
 
-lint:
-    stage: lint
+build:
+    stage: build
     only:
         - tp3
     before_script:
@@ -12,4 +12,12 @@ lint:
         - npm i
         - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
     script:
-        - cd api && npm run lint
+        - eval $(ssh-agent -s)
+        - echo "$CI_SSH_KEY" | tr -d '\r' | ssh-add -
+        - mkdir -p ~/.ssh
+        - chmod 700 ~/.ssh
+        - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+        - npm run build
+        - ssh gitlabci@192.168.75.22 "rm -fr dist/*"
+        - scp -r dist gitlabci@192.168.75.22:~
+        - ssh gitlabci@192.168.75.22 "cd /var/www/api; rm -r *; cp -r ~/dist/* ./"
