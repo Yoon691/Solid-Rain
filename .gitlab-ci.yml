@@ -1,2 +1,13 @@
+image: node:latest
+stages: 
+    - build
+    - lint
 
-
+lint:
+    stage: lint
+    before_script:
+        - cd api
+        - npm i
+        - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    script:
+        cd api && npm run lint
