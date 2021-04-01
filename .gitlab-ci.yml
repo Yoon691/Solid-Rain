@@ -1,22 +1,37 @@
 image: node:latest
-stages: 
-    - deploy
-    - lint
 
-deploy:
-    stage: deploy
-    only:
-        - tp3
+stages:
+    - build
+    - lint
+    - deploy
+
+build : 
+    stage : build
+    only : 
+      - tp3
     before_script:
-        - cd api
-        - npm i
-        - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
-    script:
-        - eval $(ssh-agent -s)
-        - echo "$CI_SSH_KEY" | tr -d '\r' | ssh-add -
-        - mkdir -p ~/.ssh
-        - chmod 700 ~/.ssh
-        - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-        - ssh gitlabci@192.168.75.22 "rm -fr dist/*"
-        - scp -r dist gitlabci@192.168.75.22:~
-        - ssh gitlabci@192.168.75.22 "cd /var/www/api; rm -r *; cp -r ~/dist/* ./"
+        - . setup-mvn-proxy.sh
+    script :
+        - cd api && npm i
+
+lint : 
+    stage : lint
+    only : 
+      - tp3
+    before_script:
+        - . setup-mvn-proxy.sh
+    script :
+        - cd api && npm run lint 
+
+
+
+deploy : 
+    stage : deploy
+    only : 
+      - tp3
+    before_script:
+        - . setup-mvn-proxy.sh && echo "$CI_SSH_KEY" > ci_private_key.pem && chmod 400 ci_private_key.pem
+    script :
+        - cd users && mvn package 
+        - scp -v -o StrictHostKeyChecking=no -i ../ci_private_key.pem /api gitlabci@192.168.75.22:/var/www/api
+
