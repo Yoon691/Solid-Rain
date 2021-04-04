@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack --mode=production",
-    "test": "test",
+    "test": "jasmine",
     "build:dev": "webpack --mode=development",
     "build:prod": "webpack --mode=production",
     "watch": "webpack --watch",
@@ -31,6 +31,7 @@
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.22.1",
     "html-webpack-plugin": "^5.3.1",
+    "jasmine": "^3.7.0",
     "postcss": "^8.2.9",
     "postcss-loader": "^5.2.0",
     "style-loader": "^2.0.0",
