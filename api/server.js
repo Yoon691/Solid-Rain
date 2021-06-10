@@ -4,6 +4,7 @@ const app = express();
 const port = 3376;
 
 const api = require('./routes/apiRouter');
+const admin = require('./routes/adminRouter');
 
 app.get('/', (req, res) => {
     res.send(
@@ -12,6 +13,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api', api);
+app.use('/admin',admin);
 
 app.use('/static', express.static('public'));
 
