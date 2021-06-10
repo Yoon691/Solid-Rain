@@ -1,3 +1,0 @@
-# BARRY Aliou Sadio 11809163
-# DERBAL Younes 118209208
-

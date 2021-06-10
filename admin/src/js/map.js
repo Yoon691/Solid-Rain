@@ -2,9 +2,13 @@
 import * as $ from "jquery"
 import * as L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+import {Icon} from "leaflet/dist/leaflet-src.esm";
 
 // L.Icon.Default.imagePath = '../../node_modules/leaflet/dist/images/'
 let mapfunc =  {
+	options: {
+
+	},
 	
 	init : function (){
 
