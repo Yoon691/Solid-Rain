@@ -18,12 +18,7 @@ function onMapClick(e) {
         .openOn(mymap);
         console.log(e.latlng.lat.toString())
         console.log(e.latlng.lng.toString())
-        //let latlon = [e.latlng.lat.toString(),e.latlng.lng.toString()]
-        //return latlon
-     /*  document.getElementById('lat1').value = e.latlng.lat.toString()
-      document.getElementById('lon1').value = e.latlng.lng.toString() */
-       //console.log(let1)
-       // console.log(lon1)
+
        $('#lat1').val(e.latlng.lat.toString())
        $('#lon1').val(e.latlng.lng.toString())
 }
@@ -87,9 +82,9 @@ $('#sendZrr').on('submit', function (e) {
     e.preventDefault();
     sendZrr();
     $.post(
-        'http://localhost:3376/admin/zrr', // Un script PHP que l'on va créer juste après
+        'http://localhost:3376/admin/zrr',
         {
-            lat1 : $("#lat1").val(),  // Nous récupérons la valeur de nos inputs que l'on fait passer à connexion.php
+            lat1 : $("#lat1").val(),
             lon1 : $("#lon1").val(),
             lat2 : $("#lat2").val(),
             lon2 : $("#lon2").val()
@@ -98,20 +93,11 @@ $('#sendZrr').on('submit', function (e) {
         function(data){
             let dataParse = JSON.parse(JSON.stringify(data));
             alert(dataParse.message)
-            // if(data == 'Success'){
-            //      // Le membre est connecté. Ajoutons lui un message dans la page HTML.
-            //
-            //      $("#resultat").html("<p>Vous avez été connecté avec succès !</p>");
-            // }
-            // else{
-            //      // Le membre n'a pas été connecté. (data vaut ici "failed")
-            //
-            //      $("#resultat").html("<p>Erreur lors de la connexion...</p>");
-            // }
+
      
         },
 
-        'json' // Nous souhaitons recevoir "Success" ou "Failed", donc on indique text !
+        'json'
      );
 
 });
@@ -127,7 +113,7 @@ $('#setTtl').on('submit', function (e) {
     e.preventDefault();
     let $ttl = setTtlf()
     $.post(
-        'http://localhost:3376/admin/ttl', // Un script PHP que l'on va créer juste après
+        'http://localhost:3376/admin/ttl',
         {
             ttl : $ttl
         },
@@ -137,20 +123,11 @@ $('#setTtl').on('submit', function (e) {
             let dataParse = JSON.parse(datajson);
             alert(dataParse.message)
 
-            // if(data == 'Success'){
-            //     // Le membre est connecté. Ajoutons lui un message dans la page HTML.
-            //
-            //     $("#resultat").html("<p>Vous avez été connecté avec succès !</p>");
-            // }
-            // else{
-            //     // Le membre n'a pas été connecté. (data vaut ici "failed")
-            //
-            //     $("#resultat").html("<p>Erreur lors de la connexion...</p>");
-            // }
+
 
         },
 
-        'json' // Nous souhaitons recevoir "Success" ou "Failed", donc on indique text !
+        'json'
     );
 
 
@@ -159,7 +136,7 @@ $('#setTtl').on('submit', function (e) {
 $('#setMeteorType').on('submit', function (e) {
     e.preventDefault();
     $.post(
-        'http://localhost:3376/admin/feu', // Un script PHP que l'on va créer juste après
+        'http://localhost:3376/admin/feu',
         {
             meteor : $('#pet-select').val(),
             startJeu : true
@@ -179,20 +156,11 @@ $('#setMeteorType').on('submit', function (e) {
             })
 
 
-            // if(data == 'Success'){
-            //     // Le membre est connecté. Ajoutons lui un message dans la page HTML.
-            //
-            //     $("#resultat").html("<p>Vous avez été connecté avec succès !</p>");
-            // }
-            // else{
-            //     // Le membre n'a pas été connecté. (data vaut ici "failed")
-            //
-            //     $("#resultat").html("<p>Erreur lors de la connexion...</p>");
-            // }
+
 
         },
 
-        'json' // Nous souhaitons recevoir "Success" ou "Failed", donc on indique text !
+        'json'
     );
     // let $typeMeteore = $('#pet-select').val()
     // mymap.off('click',onMapClick)
@@ -215,7 +183,7 @@ $('#setMeteorType').on('submit', function (e) {
 $('#addUser').on('submit', function (e) {
     e.preventDefault();
     $.post(
-        'http://localhost:3376/admin/addUser', // Un script PHP que l'on va créer juste après
+        'http://localhost:3376/admin/addUser',
         {
             login : $('#login').val()
         },
@@ -255,17 +223,9 @@ $('#addUser').on('submit', function (e) {
 
         },
 
-        'json' // Nous souhaitons recevoir "Success" ou "Failed", donc on indique text !
+        'json'
     );
 
 });
-// function selectMeteorite(){
-//     let meteorite = null
-// $('#pet-select').change(function (e) {
-//     e.preventDefault()
-//      meteorite = $(this).val()
-//     console.log(meteorite)
-// })
-//     return meteorite;
-//}
+
 
