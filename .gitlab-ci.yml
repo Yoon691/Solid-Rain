@@ -15,9 +15,9 @@
 #test : 
  #   stage : test
   #  before_script:
-        - . setup-mvn-proxy.sh
+       # - . setup-mvn-proxy.sh
    # script :
-        - cd users && mvn test 
+       # - cd users && mvn test 
 
 
 
