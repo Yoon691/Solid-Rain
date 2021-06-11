@@ -1,7 +1,9 @@
 //MàJ de l'indicateur numérique du zoom
 import mapfunc from "./map";
 import * as $ from 'jquery'
-const formfunc = (function(){
+export let apiPath;
+export const formfunc = (function(){
+
         let updateMap =  mapfunc.update()
 
        function updateZoomValue() {
