@@ -1,0 +1,23 @@
+{
+    "env": {
+        "commonjs": true,
+        "es6": true,
+        "node": true
+    },
+    "root": true,
+    "parser": "babel-eslint",
+    "extends":["eslint:recommended"],
+    "parserOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"       
+    },
+    "rules": {
+        "semi": "off",
+        "indent": ["warn", 4],
+        "no-console": "off",
+        "new-cap": ["warn", { "newIsCap": false, "capIsNew": false } ],
+        "no-return-assign": 0
+    
+        
+    }
+}
