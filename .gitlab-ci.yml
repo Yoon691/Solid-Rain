@@ -1,0 +1,35 @@
+image: node:latest
+
+stages:
+    - build
+    #- lint
+    - deploy
+
+build : 
+    stage : build
+    only : 
+      - tp3
+    before_script:
+        - . setup-mvn-proxy.sh
+    script :
+        - cd api && npm i
+
+#lint : 
+    #stage : lint
+    #only : 
+      #- tp3
+    #before_script:
+        #- . setup-mvn-proxy.sh
+    #script :
+        #- cd api && npm run lint 
+
+
+
+deploy : 
+    stage : deploy
+    only : 
+      - tp3
+    before_script:
+        - . setup-mvn-proxy.sh && echo "$CI_SSH_KEY" > ci_private_key.pem && chmod 400 ci_private_key.pem
+    script :
+        - scp -r -v -o StrictHostKeyChecking=no -i ci_private_key.pem /builds/p1809163/mif13-2021/api/* gitlabci@192.168.75.22:/var/www/api
