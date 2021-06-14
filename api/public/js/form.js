@@ -182,42 +182,45 @@ $('#setMeteorType').on('submit', function (e) {
 
 $('#addUser').on('submit', function (e) {
     e.preventDefault();
-    $.post(
-        'http://localhost:3376/admin/addUser',
-        {
-            login : $('#login').val()
-        },
+    const login = $('#login').val();
+    $.get(
+        'http://localhost:3376/admin/users/' + login,
+
+        // {
+        //     Origin : 'http://192.168.75.22:8080'
+        // },
 
         function(data){
 
             let datajson = JSON.stringify(data);
             let dataParse = JSON.parse(datajson);
-            console.log(dataParse.id)
-            console.log(dataParse.image)
-            console.log(dataParse.position)
-            console.log(dataParse.ttl)
-            console.log(dataParse.role)
-            console.log(dataParse.trophys)
-            let $lienimage = $('<a href="javascript:updateImage(\'Toto\');"><img src=dataParse.image class="icon"></a>')
-            let $lienId = $('<a href="javascript:updateName(\'Toto\');">dataParse.id</a>')
-            let $ttl = $('<strong>TTL</strong> : dataParse.ttl')
-            let $trophy = $('<strong>Trophys</strong> : dataParse.trophys')
-            //$('#userinitial').after('<ul><li><a href="javascript:updateImage('Toto');"><img src=dataParse.image class="icon"></a><a href="javascript:updateName('Toto');">dataParse.id</a><strong>TTL</strong> : dataParse.ttl <strong>Trophys</strong> : dataParse.trophys </li></ul>')
-            $('#userinitial').after('<ul>', function (){
-                    $(this).after('<li>', function (){
-                        $(this).after('<a href="javascript:updateImage(\'Toto\');"><img src=dataParse.image class="icon"></a>', function (){
-                            $(this).after('<a href="javascript:updateName(\'Toto\');">dataParse.id</a>', function (){
-                                $(this).after('<strong>TTL</strong> : dataParse.ttl', function (){
-                                    $(this).after('<strong>Trophys</strong> : dataParse.trophys', function (){
-                                        $(this).after('</li>',function (){
-                                            $(this).after('</ul>')
-                                        })
-                                    })
-                                })
-                            })
-                        })
-                    })
-            });
+            console.log(dataParse);
+            // console.log(dataParse.id)
+            // console.log(dataParse.image)
+            // console.log(dataParse.position)
+            // console.log(dataParse.ttl)
+            // console.log(dataParse.role)
+            // console.log(dataParse.trophys)
+            // let $lienimage = $('<a href="javascript:updateImage(\'Toto\');"><img src=dataParse.image class="icon"></a>')
+            // let $lienId = $('<a href="javascript:updateName(\'Toto\');">dataParse.id</a>')
+            // let $ttl = $('<strong>TTL</strong> : dataParse.ttl')
+            // let $trophy = $('<strong>Trophys</strong> : dataParse.trophys')
+            // //$('#userinitial').after('<ul><li><a href="javascript:updateImage('Toto');"><img src=dataParse.image class="icon"></a><a href="javascript:updateName('Toto');">dataParse.id</a><strong>TTL</strong> : dataParse.ttl <strong>Trophys</strong> : dataParse.trophys </li></ul>')
+            // $('#userinitial').after('<ul>', function (){
+            //         $(this).after('<li>', function (){
+            //             $(this).after('<a href="javascript:updateImage(\'Toto\');"><img src=dataParse.image class="icon"></a>', function (){
+            //                 $(this).after('<a href="javascript:updateName(\'Toto\');">dataParse.id</a>', function (){
+            //                     $(this).after('<strong>TTL</strong> : dataParse.ttl', function (){
+            //                         $(this).after('<strong>Trophys</strong> : dataParse.trophys', function (){
+            //                             $(this).after('</li>',function (){
+            //                                 $(this).after('</ul>')
+            //                             })
+            //                         })
+            //                     })
+            //                 })
+            //             })
+            //         })
+            // });
 
 
 

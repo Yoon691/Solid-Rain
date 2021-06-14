@@ -15,6 +15,7 @@
     "author": "Derbal Younes",
     "license": "ISC",
     "devDependencies": {
+        "axios": "^0.21.1",
         "babel-eslint": "^10.1.0",
         "eslint": "^7.23.0",
         "eslint-config-airbnb": "^18.2.1",

@@ -11,9 +11,33 @@ const zrr = require('../model/PerimetreJeu')
 
 router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
+const axios = require('axios');
+
+// Make a request for a user with a given ID
 
 
 // middlewars
+let login;
+router.get('/users/'+ login, (req, res) => {
+
+    axios.get('https://proxy-tps-m1if13-2019.univ-lyon1.fr/22/v1/users/' + login)
+        .then(function (response) {
+            // handle success
+            console.log(response);
+        })
+        .catch(function (error) {
+            // handle error
+            console.log(error);
+        })
+        .then(function () {
+            // always executed
+        });
+    // let zrrjson = JSON.parse(JSON.stringify(req.body))
+    // let perimetreJeu = new zrr(zrrjson.lat1,zrrjson.lon1,zrrjson.lat2,zrrjson.lon2)
+
+    console.log(perimetreJeu)
+    //res.send("Success");
+    res.status(200).json({ message: 'le périmètre de jeu est fixé' });});
 
 router.post('/zrr', (req, res) => {
     let zrrjson = JSON.parse(JSON.stringify(req.body))
